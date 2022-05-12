@@ -2,7 +2,7 @@
 <div style="text-align: center">
 
 ![AUR](https://img.shields.io/badge/license-Apache%202.0-blue.svg)
-![Java](https://img.shields.io/badge/Java%2014.0.2-passing-success.svg)
+![Java](https://img.shields.io/badge/Java%2011-passing-success.svg)
 ![Maven](https://img.shields.io/badge/Maven%203.6.3-building-success.svg)
 
 </div>
