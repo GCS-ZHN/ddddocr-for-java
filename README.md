@@ -36,4 +36,4 @@ public class Test {
 ```
 
 ## 声明
-模型版权归原作者[sml2h3](https://github.com/sml2h3)所有，仅供学习交流使用，任何问题欢迎发issue或加入[Telegram交流群](https://t.me/zjuers)。
+模型版权归原作者[sml2h3](https://github.com/sml2h3)所有，仅供学习交流使用，任何问题欢迎发issue。
