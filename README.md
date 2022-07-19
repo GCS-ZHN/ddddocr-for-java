@@ -37,3 +37,7 @@ public class Test {
 
 ## 声明
 模型版权归原作者[sml2h3](https://github.com/sml2h3)所有，仅供学习交流使用，任何问题欢迎发issue。
+
+
+## 温馨提示
+编译版本使用java 11编译，字节码版本号为55，低版本java使用会报错，可以选择克隆本项目手动打包或者升级java（PS：java都17了，别坚守java 1.8了）。
