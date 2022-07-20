@@ -21,11 +21,13 @@
             </snapshots>
         </repository>
     </repositories>
-    <dependency>
-        <groupId>top.gcszhn</groupId>
-        <artifactId>d4ocr</artifactId>
-        <version>1.0</version>
-    </dependency>
+    <dependencies>
+       <dependency>
+           <groupId>top.gcszhn</groupId>
+           <artifactId>d4ocr</artifactId>
+           <version>1.0</version>
+       </dependency>
+    </dependencies>
 ```
 同时github的maven registry要求[登录认证](https://cwiki.apache.org/confluence/display/MAVEN/DependencyResolutionException)，即只允许github用户下载，不像maven中央仓库无需注册即可下载。具体配置有[官方文档](https://docs.github.com/cn/packages/working-with-a-github-packages-registry/working-with-the-apache-maven-registry)，主要是在`settings.xml`中配置server，注意token不是登录密码，需要自行创建，[快捷链接](https://github.com/settings/tokens)。
 ```xml
