@@ -30,20 +30,16 @@ public class ONNXRuntimeUtils implements AutoCloseable {
     /**ONNX服务的环境 */
     private OrtEnvironment env = OrtEnvironment.getEnvironment();
 
-    /**
-     * 执行ONNX模型并返回结果
-     * @param modelPath 模型文件的存放地址
-     * @param inputs 模型的输入
-     * @return 执行结果
-     */
-    public OrtSession.Result run(String modelPath, Map<String, OnnxTensor> inputs) {
-        try (OrtSession session = env.createSession(modelPath)) {
-            return session.run(inputs);
+    public OrtSession createSession(String modelPath) {
+        try {
+            return env.createSession(modelPath);
         } catch (Exception e) {
-            LogUtils.printMessage("模型运行失败", e, LogUtils.Level.ERROR);
+            LogUtils.printMessage("创建ONNX模型失败", e, LogUtils.Level.ERROR);
             return null;
         }
+        
     }
+
     /**
      * 创建单精度浮点数张量
      * @param data 浮点缓存数据

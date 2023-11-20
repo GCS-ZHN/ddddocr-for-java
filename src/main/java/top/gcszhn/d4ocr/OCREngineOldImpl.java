@@ -17,6 +17,7 @@ package top.gcszhn.d4ocr;
 
 
 import ai.onnxruntime.OnnxTensor;
+import ai.onnxruntime.OrtSession;
 import com.alibaba.fastjson.JSONArray;
 import top.gcszhn.d4ocr.utils.IOUtils;
 import top.gcszhn.d4ocr.utils.ImageUtils;
@@ -55,31 +56,32 @@ class OCREngineOldImpl implements OCREngine {
 
     @Override
     public String recognize(BufferedImage image) {
-        try (ONNXRuntimeUtils onnx = new ONNXRuntimeUtils()) {
-            if (image == null) {
-                LogUtils.printMessage("OCR输入图像不能为空", LogUtils.Level.ERROR);
-                return null;
-            }
-            if (modelFile == null || !modelFile.exists() || charsetArray == null) {
-                LogUtils.printMessage("OCR模型配置缺失", LogUtils.Level.ERROR);
-                return null;
-            }
+        if (image == null) {
+            LogUtils.printMessage("OCR输入图像不能为空", LogUtils.Level.ERROR);
+            return null;
+        }
+        if (modelFile == null || !modelFile.exists() || charsetArray == null) {
+            LogUtils.printMessage("OCR模型配置缺失", LogUtils.Level.ERROR);
+            return null;
+        }
 
-            // 预处理图像
-            image = ImageUtils.resize(image, 64 * image.getWidth() / image.getHeight(), 64);
-            image = ImageUtils.toGray(image);
-            long[] shape = {1, 1, image.getHeight(), image.getWidth()};
-            float[] data = new float[(int)(shape[0] * shape[1] * shape[2] * shape[3])];
-            image.getData().getPixels(0, 0, image.getWidth(), image.getHeight(), data);
-            for (int i = 0; i < data.length; i++) {
-                data[i] /= 255;
-                data[i] = (float) ((data[i] - 0.5) / 0.5);
-            }
-
-            // 输出字符索引
-            OnnxTensor indexTensor = (OnnxTensor) onnx.run(
-                    modelFile.getAbsolutePath(),
-                    Map.of("input1",  onnx.createTensor(data, shape))).get(0);
+        // 预处理图像
+        image = ImageUtils.resize(image, 64 * image.getWidth() / image.getHeight(), 64);
+        image = ImageUtils.toGray(image);
+        long[] shape = {1, 1, image.getHeight(), image.getWidth()};
+        float[] data = new float[(int)(shape[0] * shape[1] * shape[2] * shape[3])];
+        image.getData().getPixels(0, 0, image.getWidth(), image.getHeight(), data);
+        for (int i = 0; i < data.length; i++) {
+            data[i] /= 255;
+            data[i] = (float) ((data[i] - 0.5) / 0.5);
+        }
+        try (
+            ONNXRuntimeUtils onnx = new ONNXRuntimeUtils(); 
+            OnnxTensor inputTensor = onnx.createTensor(data, shape);
+            OrtSession model = onnx.createSession(modelFile.getAbsolutePath());
+            OrtSession.Result result = model.run(Map.of("input1",  inputTensor))) {
+            
+            OnnxTensor indexTensor = (OnnxTensor) result.get(0);
             LogUtils.printMessage("score type: " + indexTensor.getInfo().type.name(), LogUtils.Level.DEBUG);
             LogUtils.printMessage("score shape: " + Arrays.toString(indexTensor.getInfo().getShape()), LogUtils.Level.DEBUG);
             long[][] index = (long[][])indexTensor.getValue();
